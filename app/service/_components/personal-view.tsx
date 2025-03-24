@@ -25,7 +25,7 @@ export default function PersonalView({
   data,
   user,
 }: {
-  data: GoogleSheetResponse['data']
+  data: NonNullable<GoogleSheetResponse['data']>
   user: string
 }) {
   const [showPast, setShowPast] = useState(false)

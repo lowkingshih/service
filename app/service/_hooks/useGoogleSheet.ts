@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { fetchGoogleSheetData } from '@/app/api/client'
+import { googleSheetApi } from '@/app/api/client'
 import { QUERY_KEY } from '@/app/const'
 import { captureMessage } from '@sentry/nextjs'
 
@@ -7,10 +7,9 @@ export default function useGoogleSheet() {
   const queryClient = useQueryClient()
   const query = useQuery({
     queryKey: [QUERY_KEY.GOOGLE_SHEET],
-    queryFn: fetchGoogleSheetData,
+    queryFn: googleSheetApi.getData,
     throwOnError: true,
-    select: (data) => {
-      const sheetData = data?.data
+    select: (sheetData) => {
       const isSheetDataValid = Array.isArray(sheetData)
       if (!isSheetDataValid) {
         const cachedSheetData = queryClient.getQueryData([QUERY_KEY.GOOGLE_SHEET])

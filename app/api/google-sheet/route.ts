@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { GoogleSheetResponse } from '@/app/type'
+import { GoogleSheetResponse, ApiResponse } from '@/app/type'
 import { fetchGoogleSheetData } from './utility'
 
 export const revalidate = 0
@@ -11,6 +11,9 @@ export async function GET() {
     return NextResponse.json(sheetData)
   } catch (error) {
     console.error('Error fetching Google Sheet data:', error)
-    return NextResponse.json({ error: 'Failed to fetch Google Sheet data' }, { status: 500 })
+    const response: ApiResponse<GoogleSheetResponse> = {
+      error: { message: error instanceof Error ? error.message : `${error}` },
+    }
+    return NextResponse.json(response, { status: 500 })
   }
 }

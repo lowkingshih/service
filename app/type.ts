@@ -9,21 +9,15 @@ export type Row = Record<SheetField, string>
 /**
  * The structure of the response from fetching Google Sheet data.
  */
-export type GoogleSheetResponse = {
-  /** An array of Row objects containing the sheet data. */
-  data: Row[]
-  /** Optional error message if the fetch operation fails. */
-  error?: string
-}
+export type GoogleSheetResponse = ApiResponse<Row[]>
 
 /**
  * The structure of the response from fetching Google Sheet Url.
  */
-export type GoogleSheetUrlResponse = {
+export type GoogleSheetUrlResponse = ApiResponse<{
   thisYearUrl: string
   nextYearUrl: string
-  error?: string
-}
+}>
 
 /**
  * The year of the Google Sheet.
@@ -82,4 +76,20 @@ export type ServiceRecord = {
   type: ServiceType
   user: string
   title: string
+}
+
+export interface IApiError {
+  message: string
+}
+
+export class ApiError extends Error implements IApiError {
+  constructor(message: string) {
+    super(message)
+    this.name = 'ApiError'
+  }
+}
+
+export interface ApiResponse<T> {
+  data?: T
+  error?: IApiError
 }

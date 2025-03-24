@@ -1,10 +1,10 @@
 'use client'
 
+import { useEffect } from 'react'
 import { Accordion } from '@/components/ui/accordion'
 import MonthlyAccordionItem from './monthly-accordion-item'
 import { GoogleSheetResponse, Row } from '@/app/type'
 import { cn } from '@/lib/utils'
-import { useEffect } from 'react'
 import useGoogleSheetUrl from '../_hooks/useGoogleSheetUrl'
 
 export default function AllServiceView({
@@ -29,6 +29,10 @@ export default function AllServiceView({
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   })
+
+  if (!serviceData?.length) {
+    return null
+  }
 
   // current year (should be set to the smallest year in the service data)
   let thisYear: number = Infinity

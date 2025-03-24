@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchGoogleSheetUrl } from '@/app/api/client'
+import { googleSheetApi } from '@/app/api/client'
 import { QUERY_KEY } from '@/app/const'
 import { GoogleSheetUrlResponse } from '@/app/type'
 
 export default function useGoogleSheetUrl() {
-  const query = useQuery<GoogleSheetUrlResponse, Error>({
+  const query = useQuery<GoogleSheetUrlResponse['data']>({
     queryKey: [QUERY_KEY.GOOGLE_SHEET_URL],
-    queryFn: fetchGoogleSheetUrl,
-    select: (data) => ({ thisYearUrl: data.thisYearUrl, nextYearUrl: data.nextYearUrl }),
+    queryFn: googleSheetApi.getUrl,
+    select: (data) => data,
     retry: 3,
     retryDelay: 1000,
   })
