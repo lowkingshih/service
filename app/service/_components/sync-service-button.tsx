@@ -20,7 +20,8 @@ import { cn } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
 
-export default function SyncButton() {
+/**  同步服事表資料 */
+export default function SyncServiceButton() {
   const { toast } = useToast()
   /** 紀錄下次同步成功後是否顯示 toast */
   const [showToast, setShowToast] = useState(false)

@@ -81,3 +81,177 @@ graph TD
 1. 使用 Sentry 進行錯誤監控。
 2. 所有部署在 Vercel 的版本，Sentry上的release version 都是 preview。
 3. 發 Github Release 才是正式版本，在 Sentry 上的版本會使用 package.json 的 version 作為版本名稱。
+
+## Supabase 開發說明
+
+(Supabase Development Guide)
+
+### 前置需求
+
+(Prerequisites)
+
+- Node.js 16+
+- Docker (for local Supabase)
+- Supabase CLI
+
+### 初始設定
+
+(Initial Setup)
+
+1. Install dependencies
+
+```bash
+$ npm install
+$ npm run prepare
+```
+
+2. Set up environment variables
+
+```bash
+$ cp .env.template .env.local
+# Edit .env.local and fill in:
+# - Supabase URL and API Key
+```
+
+3. Configure local Supabase
+
+```bash
+# Initialize Supabase
+$ npm run supabase:init
+
+# Start local Supabase
+$ npm run supabase:start
+
+# Sync remote database structure
+$ npm run db:pull
+
+# Generate TypeScript types
+$ npm run types:gen
+```
+
+4. Start development server
+
+```bash
+$ npm run dev
+```
+
+Access the site at [http://localhost:3000](http://localhost:3000).
+Local Supabase Studio is available at [http://localhost:54323](http://localhost:54323).
+
+### 開發流程
+
+(Development Workflow)
+
+```mermaid
+graph TD
+    A[Initial Setup] --> B[Local Development Environment]
+    B --> C{Choose Development Path}
+
+    C -->|Path 1| D[Modify Local Database Directly]
+    D --> E[Generate Migration]
+    E --> F[Apply Migration]
+
+    C -->|Path 2| G[Write Migration File]
+    G --> F
+
+    F --> H[Update Type Definitions]
+    H --> I[Commit Code]
+    I --> J[Deploy to Production]
+
+    %% Local Dev Environment Details
+    B --> B1[Start Docker]
+    B1 --> B2[Start Local Supabase]
+    B2 --> B3[Sync Remote Structure]
+
+    %% Migration Details
+    E --> E1[Generate Changes with db diff]
+    E1 --> E2[Review Migration File]
+
+    %% Type Update Details
+    H --> H1[Run Type Generation]
+    H1 --> H2[Update Code]
+```
+
+### 資料庫開發流程
+
+(Database Development Process)
+
+1. **Sync Remote Database**
+
+```bash
+# Pull remote database structure
+$ npm run db:pull
+
+# Reset local database and apply all migrations
+$ npm run db:reset
+```
+
+2. **Create New Tables or Modify Structure**
+
+   - Option 1: Modify in Studio and generate migration
+
+   ```bash
+   # Generate migration file from differences
+   $ npm run db:diff create_new_table
+   ```
+
+   - Option 2: Create migration file manually
+
+   ```bash
+   # Create new migration file
+   $ npm run db:new create_new_table
+
+   # Edit migrations/<timestamp>_create_new_table.sql
+   # Write SQL statements
+   ```
+
+3. **Apply Migration**
+
+```bash
+# Apply pending migrations
+$ npm run db:reset
+```
+
+4. **Update Type Definitions**
+
+```bash
+# Generate TypeScript type files
+$ npm run types:gen
+```
+
+### 常用指令
+
+(Common Commands)
+
+All commands are configured in package.json:
+
+```bash
+# Supabase Related
+npm run supabase:start    # Start local Supabase
+npm run supabase:stop     # Stop local Supabase
+npm run supabase:status   # Check Supabase status
+
+# Database Operations
+npm run db:pull          # Sync database structure from remote
+npm run db:push          # Push local changes to remote
+npm run db:reset         # Reset local database and apply migrations
+npm run db:new           # Create new migration file
+npm run db:diff          # Generate migration from database changes
+
+# Type Generation
+npm run types:gen        # Generate TypeScript type definitions
+```
+
+### 資料庫同步流程
+
+(Database Synchronization Flow)
+
+```mermaid
+graph LR
+    A[Remote Database] -->|db:pull| B[Local Database]
+    B -->|Make Changes| C[Local Changes]
+    C -->|db:diff| D[Migration File]
+    D -->|db:reset| E[Apply Changes]
+    E -->|types:gen| F[Update Types]
+    F -->|db:push| A
+```

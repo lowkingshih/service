@@ -46,6 +46,7 @@ export async function fetchGoogleSheetData(): Promise<GoogleSheetResponse> {
   const [, , ...nextYearRestRows] = (nextYearResponse?.data.values ?? []) as string[][]
   // Get the rest of the rows from the next year's sheet
   const restRows = [...thisYearRestRows, ...nextYearRestRows]
+  console.log('restRows', restRows)
 
   // Process the raw data
   const data = restRows
